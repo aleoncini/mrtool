@@ -20,7 +20,17 @@ public class PageFormatter {
     private float xLeft, xRight, xMiddle;
     private float imageY, imageHeight;
 
-    public void formatTemplate(PDDocument document) throws IOException, URISyntaxException {
+    private void formatTemplate(PDPageContentStream contentStream, PDImageXObject image) throws IOException, URISyntaxException {
+        drawBanner(contentStream, image);
+        drawHeader(contentStream);
+        drawFooter(contentStream);
+    }
+
+    private void formatReport(PDPageContentStream contentStream) throws IOException, URISyntaxException {
+        writeAssociateInfo(contentStream);
+    }
+
+    public void createReport(PDDocument document, boolean templateOnly) throws IOException, URISyntaxException {
         PDPage page = document.getPage(0);
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         Path path = Paths.get(ClassLoader.getSystemResource("RHBanner.png").toURI());
@@ -33,11 +43,26 @@ public class PageFormatter {
         imageHeight = (width / image.getWidth()) * image.getHeight();
         imageY = page.getBleedBox().getHeight() - 40 - imageHeight;
 
-        drawBanner(contentStream, image);
-        drawHeader(contentStream);
-        drawFooter(contentStream);
+        formatTemplate(contentStream, image);
+        if (! templateOnly){
+            formatReport(contentStream);
+        }
 
         contentStream.close();
+    }
+
+    private void writeAssociateInfo(PDPageContentStream contentStream) throws IOException {
+        writeCellValue(contentStream, 0, 0, "Andrea Leoncini");
+    }
+
+    public boolean checkTemplate(){
+        Path path = null;
+        try {
+            path = Paths.get(ClassLoader.getSystemResource("report.pdf").toURI());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return path.toFile().exists();
     }
 
     private void drawFooter(PDPageContentStream contentStream) throws IOException {
@@ -154,6 +179,21 @@ public class PageFormatter {
         contentStream.beginText();
         contentStream.newLineAtOffset(x, y);
         contentStream.showText(header);
+        contentStream.endText();
+    }
+
+    private void writeCellValue(PDPageContentStream contentStream, int col, int row, String value) throws IOException {
+        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 10);
+        contentStream.setNonStrokingColor(darkBlue);
+
+        float text_width = (PDType1Font.HELVETICA_BOLD.getStringWidth(value) / 1000.0f) * 10;
+        float cellWidth = width / 3;
+        float x = xLeft + (cellWidth * col) + (cellWidth / 2) - (text_width / 2);
+        float y = imageY - (40 * row) - 30;
+
+        contentStream.beginText();
+        contentStream.newLineAtOffset(x, y);
+        contentStream.showText(value);
         contentStream.endText();
     }
 

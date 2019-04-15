@@ -25,25 +25,24 @@ public class Report {
         this.fileName = fileName;
     }
 
-    public void makeTemplate(){
-        PDDocument document = createDocument();
-        formatTemplatePage(document);
-        save(document);
+    public Report make() {
+        return this.make(false);
     }
 
-    public void make(){
+    public Report make(boolean templateOnly) {
         PDDocument document = createDocument();
-        //formatPage(document);
+        formatDocument(document, templateOnly);
         save(document);
+        return this;
     }
 
     public File getReportFile(){
         return reportFile;
     }
 
-    private void formatTemplatePage(PDDocument document) {
+    private void formatDocument(PDDocument document, boolean templateOnly) {
         try {
-            new PageFormatter().formatTemplate(document);
+            new PageFormatter().createReport(document, templateOnly);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
