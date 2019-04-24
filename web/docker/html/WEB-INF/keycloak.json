@@ -1,0 +1,8 @@
+{
+  "realm": "laziocrea-master",
+  "auth-server-url": "https://access.interno.lazio.it:8443/auth",
+  "ssl-required": "external",
+  "resource": "cruscotto",
+  "public-client": true,
+  "confidential-port": 0
+}
