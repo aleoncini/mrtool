@@ -1,70 +1,100 @@
 package it.redhat.mrtool.core.pdf;
 
-import it.redhat.mrtool.core.helpers.PageFormatter;
+import it.redhat.mrtool.core.io.ReportDirectory;
+import it.redhat.mrtool.core.persistence.AssociateHelper;
+import it.redhat.mrtool.core.persistence.TripHelper;
 import it.redhat.mrtool.model.Associate;
+import it.redhat.mrtool.model.Trip;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URISyntaxException;
+import java.time.Month;
+import java.time.format.TextStyle;
+import java.util.List;
+import java.util.Locale;
 
 public class Report {
+    private static final Logger logger = LoggerFactory.getLogger("it.redhat.mrtool");
+
+    private String associateId;
     private Associate associate;
+    private List<Trip> trips;
+    private int totalYearDistance;
+    private int totalMonthDistance;
     private int year;
     private int month;
-    private String fileName;
     private File reportFile;
 
-    public Report(String associateUuid, int year, int month, String fileName){
-        this.associate = new Associate().setUuid(associateUuid);
+    public Report(String redhatId, int year, int month){
+        this.associateId = redhatId;
         this.year = year;
         this.month = month;
-        this.fileName = fileName;
     }
 
-    public Report make() {
-        return this.make(false);
-    }
+    public Report make(){
+        logger.info("[Report] loading associate data...");
+        associate = new AssociateHelper().get(associateId);
+        logger.info("[Report] loaded " + associate.getName());
 
-    public Report make(boolean templateOnly) {
-        PDDocument document = createDocument();
-        formatDocument(document, templateOnly);
-        save(document);
+        TripHelper helper = new TripHelper();
+
+        logger.info("[Report] loading trips...");
+        trips = helper.getTrips(associateId, year, month);
+        totalMonthDistance = helper.distance(trips);
+        logger.info("[Report] loaded " + trips.size() + " trips");
+
+        logger.info("[Report] loading trips...");
+        totalYearDistance = helper.getTotalYearDistance(associateId, year);
+        logger.info("[Report] loaded " + trips.size() + " trips");
+
+        logger.info("[Report] formatting pdf report...");
+        PageFormatter formatter = null;
+        try {
+            formatter = new PageFormatter().init();
+            formatter.formatBanner();
+            formatter.formatHeader();
+            formatter.formatFooter();
+            formatter.formatHeaderInfo(associate, getPeriod(), totalMonthDistance, totalYearDistance);
+            formatter.formatTripsTable(trips);
+            formatter.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        logger.info("[Report] saving file...");
+        save(formatter.getDocument());
+
+        logger.info("[Report] formatting complete.");
         return this;
+    }
+
+    private String getPeriod() {
+        return Month.of(month).getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + year;
+    }
+
+    public String getFileName(){
+        return new ReportDirectory().getReportsDirectoryPath().toString() + "/" + associate.getRedhatId() + "_" + year + "_" + month + ".pdf";
     }
 
     public File getReportFile(){
         return reportFile;
     }
 
-    private void formatDocument(PDDocument document, boolean templateOnly) {
-        try {
-            new PageFormatter().createReport(document, templateOnly);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private PDDocument createDocument(){
-        PDDocument document = new PDDocument();
-        document.addPage(new PDPage());
-        return document;
-    }
-
     private void save(PDDocument document){
         String errorMessage = "";
         try {
-            document.save(fileName);
-            reportFile = new File(fileName);
+            String path = getFileName();
+            logger.info("[Report] saving " + path);
+            document.save(path);
+            reportFile = new File(path);
         } catch (Throwable t) {
             StringWriter trace = new StringWriter();
             t.printStackTrace(new PrintWriter(trace, true));
-            errorMessage = trace.toString();
+            logger.info(trace.toString());
         }
         if (errorMessage.length() > 0){
             System.out.println(errorMessage);

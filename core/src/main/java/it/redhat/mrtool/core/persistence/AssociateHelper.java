@@ -1,51 +1,70 @@
-package it.redhat.mrtool.core.helpers;
+package it.redhat.mrtool.core.persistence;
 
-import com.mongodb.*;
-import it.redhat.mrtool.core.persistence.DBTool;
+import com.mongodb.client.result.DeleteResult;
 import it.redhat.mrtool.model.Associate;
+import org.bson.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AssociateHelper {
     public final static String COLLECTION_NAME = "associates";
 
-    public Associate get(String uuid){
-        DBObject query = new BasicDBObject("uuid", uuid);
-        DBObject dbObject = DBTool.getInstance().getCollection(COLLECTION_NAME).find(query).one();
-        return getAssociate(dbObject);
+    public Associate get(String rhid){
+        Document query = new Document("rhid", rhid);
+        Document document = DBTool.getInstance().getCollection(COLLECTION_NAME).find(query).first();
+        return new Associate().build(document);
     }
 
-    public Associate getByRedHatID(String rhid){
-        DBObject query = new BasicDBObject("rhid", rhid);
-        DBObject dbObject = DBTool.getInstance().getCollection(COLLECTION_NAME).find(query).one();
-        return getAssociate(dbObject);
+    public void insertOrUpdate(String jsonString){
+        this.insertOrUpdate(new Associate().build(jsonString));
     }
 
-    public int insert(Associate associate){
-        DBCollection collection = DBTool.getInstance().getCollection(COLLECTION_NAME);
-        WriteResult result = collection.insert(getDocument(associate));
-        return result.getN();
+    public void insertOrUpdate(Associate associate){
+        Associate associateFromDB = get(associate.getRedhatId());
+        if (associateFromDB != null){
+            Document query = new Document("rhid", associate.getRedhatId());
+            DBTool.getInstance().getCollection(COLLECTION_NAME).updateOne(query, associate.toDocument());
+        } else {
+            DBTool.getInstance().getCollection(COLLECTION_NAME).insertOne(associate.toDocument());
+        }
     }
 
-    public int deleteByRedHatID(String rhid){
-        DBObject query = new BasicDBObject("rhid", rhid);
-        WriteResult writeResult = DBTool.getInstance().getCollection(COLLECTION_NAME).remove(query);
-        return writeResult.getN();
+    public long deleteByRedHatID(String rhid){
+        Document query = new Document("rhid", rhid);
+        DeleteResult deleteResult = DBTool.getInstance().getCollection(COLLECTION_NAME).deleteOne(query);
+        return deleteResult.getDeletedCount();
     }
 
-    private DBObject getDocument(Associate associate){
-        DBObject dbObject = new BasicDBObject("uuid", associate.getUuid())
-                .append("name", associate.getName())
-                .append("rhid", associate.getRedhatId())
-                    .append("costCenter", associate.getCostCenter())
-                .append("email", associate.getEmail());
-        return dbObject;
+    public String getAssociateList(){
+        boolean isFirst = true;
+        Document projection = new Document("rhid", 1).append("name", 1);
+        List<Document> associates = new ArrayList<Document>();
+        DBTool.getInstance().getCollection(COLLECTION_NAME)
+                .find()
+                .projection(projection)
+                .into(associates);
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("{");
+        buffer.append(" \"associates\": [ ");
+        for (Document associate : associates) {
+            if (isFirst){
+                isFirst = false;
+            } else {
+                buffer.append(", ");
+            }
+            buffer.append(getAssociateShortJsonString(associate));
+        }
+        buffer.append(" ] }");
+        return buffer.toString();
     }
 
-    private Associate getAssociate(DBObject dbObject){
-        return new Associate()
-                .setUuid((String)dbObject.get("uuid"))
-                .setName((String)dbObject.get("name"))
-                .setRedhatId((String)dbObject.get("rhid"))
-                .setCostCenter((String)dbObject.get("costCenter"))
-                .setEmail((String)dbObject.get("email"));
+    public String getAssociateShortJsonString(Document document){
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("{ ");
+        buffer.append("\"rhid\": \"").append(document.getString("rhid")).append("\", ");
+        buffer.append("\"name\": \"").append(document.getString("name")).append("\"");
+        buffer.append(" }");
+        return buffer.toString();
     }
 }

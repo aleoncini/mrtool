@@ -1,10 +1,10 @@
 package it.redhat.mrtool.model;
 
+import org.bson.Document;
+
 public class Location {
     private String destination;
-    private String purpose;
     private int distance;
-    private String associateUid;
 
     public String getDestination() {
         return destination;
@@ -12,15 +12,6 @@ public class Location {
 
     public Location setDestination(String destination) {
         this.destination = destination;
-        return this;
-    }
-
-    public String getPurpose() {
-        return purpose;
-    }
-
-    public Location setPurpose(String purpose) {
-        this.purpose = purpose;
         return this;
     }
 
@@ -33,13 +24,36 @@ public class Location {
         return this;
     }
 
-    public String getAssociateUid() {
-        return associateUid;
+    @Override
+    public String toString(){
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("{ ");
+        buffer.append("\"destination\": \"").append(destination).append("\", ");
+        buffer.append("\"distance\": ").append(distance);
+        buffer.append(" }");
+        return buffer.toString();
     }
 
-    public Location setAssociateUid(String uid) {
-        this.associateUid = uid;
+    public Document toDocument(){
+        if ((destination == null) || (destination.length() == 0)){
+            return null;
+        }
+        return new Document("destination", destination)
+                .append("distance", distance);
+    }
+
+    public Location build(Document document){
+        if (document == null){
+            return null;
+        }
+        this.destination = document.getString("destination");
+        this.distance = document.getInteger("distance");
         return this;
+    }
+
+    public Location build(String jsonString){
+        Document document = Document.parse(jsonString);
+        return this.build(document);
     }
 
 }

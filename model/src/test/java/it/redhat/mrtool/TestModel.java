@@ -14,8 +14,7 @@ public class TestModel {
             .setRedhatId("9053");
     private Car car = new Car()
             .setRegistryNumber("FB214ZM")
-            .setMileageRate(0.89f)
-            .setAssociateUid(associate.getUuid());
+            .setMileageRate(0.89f);
 
     @Test
     public void testAssociate(){

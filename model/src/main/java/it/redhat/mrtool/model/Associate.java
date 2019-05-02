@@ -1,26 +1,13 @@
 package it.redhat.mrtool.model;
 
-import java.util.UUID;
+import org.bson.Document;
 
 public class Associate {
-    private String uuid;
     private String name;
     private String email;
     private String costCenter;
     private String redhatId;
-
-    public Associate(){
-        this.uuid = UUID.randomUUID().toString();
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public Associate setUuid(String uuid) {
-        this.uuid = uuid;
-        return this;
-    }
+    private Car car;
 
     public String getName() {
         return name;
@@ -56,6 +43,71 @@ public class Associate {
     public Associate setRedhatId(String id) {
         this.redhatId = id;
         return this;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public Associate setCar(Car car) {
+        this.car = car;
+        return this;
+    }
+
+    @Override
+    public String toString(){
+        StringBuffer buffer = new StringBuffer();
+        buffer.append("{ ");
+        buffer.append("\"rhid\": \"").append(redhatId).append("\"");
+        if (name != null){
+            buffer.append(", \"name\": \"").append(name).append("\"");
+        }
+        if (email != null){
+            buffer.append(", \"email\": \"").append(email).append("\"");
+        }
+        if (costCenter != null){
+            buffer.append(", \"costCenter\": \"").append(costCenter).append("\"");
+        }
+        if (car != null){
+            buffer.append(", \"car\": ").append(car.toString());
+        }
+        buffer.append(" }");
+
+        return buffer.toString();
+    }
+
+    public Document toDocument(){
+        if ((redhatId == null) || (redhatId.length() == 0) || (name == null) || (name.length() == 0) || (costCenter == null) || (costCenter.length() == 0) || (car == null)){
+            return null;
+        }
+        Document carDoc = new Car().toDocument();
+        return new Document("rhid", redhatId)
+                .append("name", name)
+                .append("costCenter", costCenter)
+                .append("email", email)
+                .append("car", carDoc);
+    }
+
+    public Associate build(Document document){
+        if (document == null){
+            return null;
+        }
+        Document carDoc = (Document) document.get("car");
+        Car car = new Car()
+                .setRegistryNumber(carDoc.getString("registryNumber"))
+                .setMileageRate(carDoc.getDouble("mileageRate"));
+
+        this.redhatId = document.getString("rhid");
+        this.name = document.getString("name");
+        this.costCenter = document.getString("costCenter");
+        this.email = document.getString("email");
+        this.car = car;
+        return this;
+    }
+
+    public Associate build(String jsonString){
+        Document document = Document.parse(jsonString);
+        return this.build(document);
     }
 
 }

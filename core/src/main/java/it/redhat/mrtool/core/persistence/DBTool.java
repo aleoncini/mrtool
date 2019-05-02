@@ -1,14 +1,16 @@
 package it.redhat.mrtool.core.persistence;
 
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.MongoClient;
-
-import java.net.UnknownHostException;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 
 public class DBTool {
+    public final static String DB_NAME = "mrtool";
     private static DBTool theInstance;
-    DB database;
+    MongoClient mongoClient;
+    MongoDatabase database;
 
     public static DBTool getInstance(){
         if( theInstance == null ){
@@ -18,18 +20,16 @@ public class DBTool {
     }
 
     private DBTool(){
-        try {
-            database = new MongoClient().getDB("mrtool");
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
+        mongoClient = MongoClients.create();
+        database = mongoClient.getDatabase(DB_NAME);
     }
 
-    public DBCollection getCollection(String collection){
+    public MongoCollection<Document> getCollection(String collection){
         return database.getCollection(collection);
     }
 
     public void shutdown(){
         database = null;
+        mongoClient.close();
     }
 }
