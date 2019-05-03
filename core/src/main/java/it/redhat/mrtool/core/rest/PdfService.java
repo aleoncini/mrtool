@@ -20,7 +20,6 @@ public class PdfService {
         if (fileDownload == null){
             return Response.status(404).build();
         }
-        System.out.println("======================> " + fileDownload.getAbsolutePath());
         Response.ResponseBuilder response = Response.ok((Object) fileDownload);
         response.header("Content-Disposition", "attachment;filename=" + fileDownload.getName());
         return response.build();

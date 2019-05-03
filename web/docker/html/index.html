@@ -33,7 +33,7 @@
 </head>
 <body style="padding-top: 3.5rem">
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">MRTool</a>
+    <img src="images/logo.svg" width="135" height="32"><img src="images/transparent_spacer.png">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -41,10 +41,10 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-                <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link disabled" href="#">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Trips</a>
+                <a class="nav-link" href="trips.html">Trips</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link disabled" href="#">Setup</a>
@@ -71,8 +71,8 @@
     <div class="jumbotron">
         <div class="container">
             <h1 class="display-3">Mileage Report Tool</h1>
-            <p>Simplify your life. Save time. Do the right things. Send the report each month!</p>
-            <p><a id="btn_report" class="btn btn-primary btn-lg" href="#" role="button">Get Latest &raquo;</a></p>
+            <p class="lead">Simplify your life. Save time. Do the right things. Send the report each month!</p>
+            <p><a id="btn_latest_report" class="btn btn-primary btn-lg" href="#" role="button">Get Latest</a></p>
             <p id="the_response"></p>
         </div>
     </div>
@@ -117,8 +117,8 @@
 <script type="text/javascript">
 
     $(document).ready(function(){
-        $("#btn_report").click(function(){
-            getReport();
+        $("#btn_latest_report").click(function(){
+            window.location="/rs/pdf/latest/9053"
         });
     });
 

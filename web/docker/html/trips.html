@@ -8,7 +8,7 @@
     <title>MR Tool - trips</title>
 
     <link rel="canonical" href="https://getbootstrap.com/docs/4.3/examples/jumbotron/">
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
@@ -23,6 +23,25 @@
             user-select: none;
         }
 
+        .btn-circle {
+            width: 30px;
+            height: 30px;
+            padding: 6px 0px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.42857;
+        }
+
+        .btn-circle.btn-xl {
+            width: 70px;
+            height: 70px;
+            padding: 10px 16px;
+            border-radius: 35px;
+            font-size: 24px;
+            line-height: 1.33;
+        }
+
         @media (min-width: 768px) {
             .bd-placeholder-img-lg {
                 font-size: 3.5rem;
@@ -33,24 +52,20 @@
 </head>
 <body style="padding-top: 3.5rem">
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-    <a class="navbar-brand" href="#">MRTool</a>
+    <img src="images/logo.svg" width="135" height="32"><img src="images/transparent_spacer.png">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="index.html">Home</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="#">Trips</a>
+            <li class="nav-item active">
+                <a class="nav-link disabled" href="#">Trips</a>
             </li>
         </ul>
-        <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
     </div>
 </nav>
 
@@ -61,50 +76,69 @@
         <div class="container">
             <h1 class="display-3">Your Trips</h1>
             <p>Use this page to insert your monthly trips.</p>
+
+            <div class="w-50 p-3">
+                <label for="inputYear">Year: </label>
+                <select id="inputYear" class="form-control" data-style="btn-info" width="400px">
+                    <option value="2018"> 2018 </option>
+                    <option value="2019" selected> 2019 </option>
+                </select>
+                <label for="inputMonth">Month: </label>
+                <select id="inputMonth" class="form-control">
+                    <option value="0" selected> Choose month... </option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <br>
+                <button id="btn_load_trips" type="submit" class="btn btn-primary float-right">Go &raquo;</button>
+            </div>
+
+
             <form>
                 <div class="form-inline">
                     <div class="form-group">
-                        <select id="inputYear" class="form-control" data-style="btn-info" width="400px">
-                            <option value="2018"> 2018 </option>
-                            <option value="2019" selected> 2019 </option>
-                        </select>
+                        <img src="images/transparent_spacer.png">
                     </div>
                     <div class="form-group">
-                        <select id="inputMonth" class="form-control">
-                            <option value="0" selected> Choose month... </option>
-                            <option value="1">January</option>
-                            <option value="2">February</option>
-                            <option value="3">March</option>
-                            <option value="4">April</option>
-                            <option value="5">May</option>
-                            <option value="6">June</option>
-                            <option value="7">July</option>
-                            <option value="8">August</option>
-                            <option value="9">September</option>
-                            <option value="10">October</option>
-                            <option value="11">November</option>
-                            <option value="12">December</option>
-                        </select>
+                        <img src="images/transparent_spacer.png">
                     </div>
-                    <button id="btn_load_trips" type="submit" class="btn btn-primary">Go &raquo;</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <div class="container">
+        <div class="row">
+            <div id="tableInfo" class="w-75" style="height: 60px; background-color: rgba(0,100,100,.1); padding: 15px 0">
+            </div>
+            <div class="w-25" style="height: 60px; background-color: rgba(0,100,100,.1); padding: 15px 0; text-align: right">
+                <button type="button" class="btn btn-primary btn-circle"><i class="fa fa-plus"></i>
+                </button>
+                <img src="images/transparent_spacer.png">
+            </div>
+        </div>
+
+    </div>
+
     <div id="tripsContainer" class="container">
+        <table class="table table-condensed table-hover" id="tbl_round_list">
+        </table>
 
         <hr>
 
     </div> <!-- /container -->
 
 </main>
-
-<footer class="container">
-    <p>&copy; Red Hat Italy 2019-2021</p>
-</footer>
-
-
 
 <!-- Optional JavaScript -->
 <script src="js/app.js"></script>
@@ -115,17 +149,10 @@
 <script type="text/javascript">
 
     $(document).ready(function(){
-        console.log($('#inputMonth').val());
-        console.log($('#inputYear').val());
         $('#btn_load_trips').click(function(){
-            //initTripsTable();
+            initTripsTable();
         });
-        $('#inputMonth').change(function(){
-            console.log($(this).val());
-        });
-        $('#inputYear').change(function () {
-            console.log($(this).val());
-        });
+        //document.getElementById("tbl_round_list").innerHTML = "<thead><tr><th>Day</th><th>From office to</th><th>purpose</th><th>mileage (Km)</th></tr></thead><tbody><tr><td>7</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>8</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>9</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>10</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>11</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>14</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>15</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>16</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>17</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>18</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>21</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>22</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>23</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>24</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>25</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>30</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>30</td><td>pippo</td><td>pluto</td><td>100</td></tr><tr><td>28</td><td>pippo</td><td>pluto</td><td>100</td></tr></tbody>";
     });
 
 </script>

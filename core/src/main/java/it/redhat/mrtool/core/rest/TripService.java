@@ -15,7 +15,7 @@ public class TripService {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{associateId}/{year}/{month}")
     public Response tripsOfTheMonth(@PathParam("associateId") String id, @PathParam("year") int year, @PathParam("month") int month) {
-        return Response.status(200).entity(new TripHelper().getTrips(id, year, month)).build();
+        return Response.status(200).entity(new TripHelper().getJsonTrips(id, year, month)).build();
     }
 
     @POST
