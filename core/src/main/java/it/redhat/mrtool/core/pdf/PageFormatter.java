@@ -40,7 +40,7 @@ public class PageFormatter {
         contentStream = new PDPageContentStream(document, page);
 
         //Path path = Paths.get(new ReportDirectory().getResourcesDirectoryPath().toString() + "RHBanner.png");
-        String path = new ReportDirectory().getResourcesDirectoryPath().toString() + "/RHBanner.png";
+        String path = new ReportDirectory().getResourcesDirectoryPath().toString() + "/RHBannerNew.png";
         logger.info("[PageFormatter] loading banner from: " + path);
 
         bannerImage = PDImageXObject.createFromFile(path, document);
@@ -79,7 +79,7 @@ public class PageFormatter {
         contentStream.setFont(PDType1Font.HELVETICA, 6);
         contentStream.setNonStrokingColor(darkBlue);
 
-        String text = "Total mileage for month/period";
+        String text = "Total mileage for month/period (Km)";
         float text_width = (PDType1Font.HELVETICA.getStringWidth(text) / 1000.0f) * 6;
 
         contentStream.beginText();
@@ -87,7 +87,7 @@ public class PageFormatter {
         contentStream.showText(text);
         contentStream.endText();
 
-        text = "Total cost for month/period";
+        text = "Total cost for month/period (Euro)";
         text_width = (PDType1Font.HELVETICA.getStringWidth(text) / 1000.0f) * 6;
 
         contentStream.beginText();
@@ -129,11 +129,11 @@ public class PageFormatter {
         writeCellLabel(contentStream, 0, 1, "cost center");
         writeCellLabel(contentStream, 0, 2, "employee number");
         writeCellLabel(contentStream, 1, 0, "period");
-        writeCellLabel(contentStream, 1, 1, "car reg number");
+        writeCellLabel(contentStream, 1, 1, "car registry number");
         writeCellLabel(contentStream, 1, 2, "mileage cost rate");
         writeCellLabel(contentStream, 2, 0, "this month total (km)");
-        writeCellLabel(contentStream, 2, 1, "total from previous report");
-        writeCellLabel(contentStream, 2, 2, "this year total including this month");
+        writeCellLabel(contentStream, 2, 1, "total from previous report (Km)");
+        writeCellLabel(contentStream, 2, 2, "this year total including this month (Km)");
     }
 
     private void drawHeaderLines() throws IOException {

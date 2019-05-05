@@ -10,7 +10,7 @@ public class TestReport {
 
     @Test
     public void testMakeReport(){
-        File file = new Report("9053", 2019, 4).make().getReportFile();
+        File file = new Report("9053", 2019, 1).make().getReportFile();
         Assert.assertTrue(file.exists());
     }
 }
