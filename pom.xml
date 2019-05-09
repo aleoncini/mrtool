@@ -17,6 +17,13 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
       <maven.compiler.source>1.8</maven.compiler.source>
       <maven.compiler.target>1.8</maven.compiler.target>
+        <version.thorntail>2.4.0.Final</version.thorntail>
+        <version.fabric8-maven-plugin>4.1.0</version.fabric8-maven-plugin>
+        <version.maven-surefire-plugin>2.22.2</version.maven-surefire-plugin>
+        <version.maven-war-plugin>3.2.2</version.maven-war-plugin>
+        <failOnMissingWebXml>false</failOnMissingWebXml>
+        <version.fabric8-maven-plugin>4.1.0</version.fabric8-maven-plugin>
+        <fabric8.generator.from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift:1.6</fabric8.generator.from>
     </properties>
 
 	<!-- sub modules -->
@@ -43,6 +50,16 @@
       <version>4.11</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>javax</groupId>
+          <artifactId>javaee-api</artifactId>
+          <version>7.0</version>
+      </dependency>
+      <dependency>
+          <groupId>it.redhat.mrtool</groupId>
+          <artifactId>model</artifactId>
+          <version>1.0</version>
+      </dependency>
   </dependencies>
 
     <build>
